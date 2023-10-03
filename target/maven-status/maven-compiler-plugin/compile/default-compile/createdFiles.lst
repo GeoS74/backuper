@@ -1,4 +1,1 @@
-com\signal\backuper\Backuper.class
-com\signal\backuper\App.class
-com\signal\backuper\MyFileVisitor.class
-com\signal\backuper\Copier.class
+com/signal/backuper/SimpleApp.class
