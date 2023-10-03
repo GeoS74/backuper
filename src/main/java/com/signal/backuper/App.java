@@ -30,18 +30,18 @@ public class App {
         App.runDeamon();
         
         while(true) {
-            String command = App.scan.nextLine();
-             
-            if("q".equals(command) || "quit".equals(command)) {
-                App.exitProgram();
-            }
-            
-            if("help".equals(command)) {
-                App.showHelp();
-            }
-            
-            if("state".equals(command)) {
-                App.showState();
+            switch(App.scan.nextLine()) {
+                case "q":
+                case "quit":
+                    App.exitProgram();
+                    break;
+                case "status":
+                case "state":
+                    App.showState();
+                    break;
+                case "help":
+                    App.showHelp();
+                    break;
             }
         }
     }
