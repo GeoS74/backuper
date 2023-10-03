@@ -1,6 +1,5 @@
 package com.signal.backuper;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -11,19 +10,16 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class App {
     private static final String IGNORE_FILE_NAME = ".backupignore";
-    private static final ArrayList<String> ignoreRules = new ArrayList<>();
+    private static final ArrayList<Pattern> ignorePatterns = new ArrayList<>();
     private static final Scanner scan = new Scanner(System.in);
     private static final String TIME_PATTERN = "\\d{1,2}:\\d{1,2}";
     private static final String TIME_START_FORMAT = "HH:mm:ss";
@@ -60,8 +56,6 @@ public class App {
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
 
-//             File.separator
-
                System.out.println("====================");
                System.out.println(file);
                System.out.println(App.from.relativize(file));
@@ -73,21 +67,11 @@ public class App {
     }
     
     private static boolean matchingIgnoreRules(Path file) {
-//        Pattern pattern = Pattern.compile(App.TIME_PATTERN);
-//        Matcher match = pattern.matcher(time);
+        String relativePath = App.from.relativize(file).toString();
         
-        for(String rule: App.ignoreRules) {
-            
-            // first char "/" about rule
-            if(String.valueOf(rule.charAt(0)).equals(File.separator)) {
-
-                if(Pattern.matches("^" + rule, file.toString())) {
-                    return true;
-                }
-                
-                if(Pattern.matches(rule, file.toString())) {
-                    return true;
-                }
+        for(Pattern rule: App.ignorePatterns) {
+            if(rule.matcher(relativePath).find()){
+                return true;
             }
         }
         
@@ -99,7 +83,6 @@ public class App {
             @Override
             public void run() {
                 try {
-                    System.out.println(App.ignoreRules);
                     Files.walkFileTree(App.from, App.fileVisitor);
                 } catch (IOException ex) {}
                 
@@ -172,13 +155,24 @@ public class App {
         try {
             List<String> igRules = Files.readAllLines(path);
             
-            //default rules
-            App.ignoreRules.add(App.IGNORE_FILE_NAME);
-
-            igRules.forEach(rule -> App.ignoreRules.add(Paths.get(rule).toString()));
+            // default rules
+            App.ignorePatterns.add(App.makeIgnorePattern(App.IGNORE_FILE_NAME));
+            
+            // other rules
+            igRules.forEach(rule -> {
+                App.ignorePatterns.add(App.makeIgnorePattern(rule));
+            });
         } catch (IOException ex) {
             System.out.println("ATTENTION: file .backupignor not exist");
         }
+    }
+    
+    private static Pattern makeIgnorePattern(String rule) {
+        // other special symbols?
+        rule = rule.replaceFirst("^/", "^");
+        rule = rule.replaceAll("\\*", "[^/]*");
+        rule = rule.replaceAll("\\.", "\\\\.");
+        return Pattern.compile(rule);
     }
 
     private static void exitProgram() {

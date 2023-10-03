@@ -23,10 +23,25 @@ public class Backuper {
     public static void main(String[] args) {
         try {
             App.setFrom();
-//            App.setTo();
-//            App.setTimeStart();
+            App.setTo();
+            App.setTimeStart();
             App.start();
 
+//        System.out.println(Paths.get("dd"));
+//              System.out.println( "/a".replaceFirst("^/", "^") );
+//              System.out.println( "*foo.txt".replaceAll("\\*", "*") );
+//              System.out.println( "*fo/o.txt".replaceAll("\\*", ".*") );
+//              System.out.println( "*fo/a\b.txt".replaceAll("\\\\", "j") );
+//
+//                String s = "sub/.backupignore";
+//                String reg = "/sub";
+//                reg = reg.replaceFirst("^/", "^");
+//                System.out.println(reg);
+//                Pattern p = Pattern.compile(reg);
+//                Matcher m = p.matcher(s);
+//                System.out.println(m.find());
+                
+                
 //                ArrayList<String> arr = new ArrayList<>();
 //                arr.add("1");
 //                arr.add("2");
