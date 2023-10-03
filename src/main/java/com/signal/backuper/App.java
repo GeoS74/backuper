@@ -26,7 +26,6 @@ public class App {
     private static final ArrayList<String> timeStart = new ArrayList<>();
     private static Path from;
     private static Path to;
-    private static Long timeOut;
     
     public static void start(){
         App.messageStart();
@@ -92,22 +91,6 @@ public class App {
         if(App.timeStart.isEmpty()) {
             throw new Exception("incorrect set time for start");
         }
-    }
-    
-    public static void setTimeout() {
-        System.out.println("input timeout in ms:");
-        int ms = 0;
-        
-        try {
-            ms = Integer.parseInt(App.scan.nextLine());
-        } 
-        catch (NumberFormatException ex) {} 
-        
-        if(ms < 60*60*1000) {
-            ms = 60*60*1000;
-        }
-        
-        App.timeOut = (long) ms;
     }
 
     public static void setFrom() throws Exception {

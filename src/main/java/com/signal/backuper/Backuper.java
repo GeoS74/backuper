@@ -20,7 +20,6 @@ public class Backuper {
         try {
 //            App.setFrom();
 //            App.setTo();
-////            App.setTimeout();
             App.setTimeStart();
             App.start();
 
