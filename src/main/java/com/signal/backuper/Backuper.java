@@ -23,22 +23,33 @@ public class Backuper {
 ////            App.setTimeout();
             App.setTimeStart();
             App.start();
-              
-              String str = "08:10";
-              String str2 = "08:10;7:15;22:23; 123:533 45&77";
-              String str3 = "5:3";
-              
 
-              int h = Integer.parseInt("08");
-              
-              GregorianCalendar cal = new GregorianCalendar();
-              
-              SimpleDateFormat formatter = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
-              
-              cal.set(Calendar.HOUR_OF_DAY, h);
-              cal.set(Calendar.MINUTE, 3);
-              
+//                ArrayList<String> arr = new ArrayList<>();
+//                arr.add("1");
+//                arr.add("2");
+//                arr.add("3");
+//
+//                System.out.println(arr.indexOf("21"));
 
+
+
+
+              
+//              String str = "08:10";
+//              String str2 = "08:10;7:15;22:23; 123:533 45&77";
+//              String str3 = "5:3";
+//              
+//
+//              int h = Integer.parseInt("08");
+//              
+//              GregorianCalendar cal = new GregorianCalendar();
+//              
+//              SimpleDateFormat formatter = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
+//              
+//              cal.set(Calendar.HOUR_OF_DAY, h);
+//              cal.set(Calendar.MINUTE, 3);
+              
+//              System.out.println(formatter.format( new Date().getTime() ));
 //              System.out.println(formatter.format(cal.getTime()));
 //              
 //              GregorianCalendar cal = new GregorianCalendar(2002, 0, 15, 11, 35);

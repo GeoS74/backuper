@@ -11,6 +11,8 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,7 +21,8 @@ public class App {
     private static final ArrayList<String> ignoreRules = new ArrayList<>();
     private static final Scanner scan = new Scanner(System.in);
     private static final String TIME_PATTERN = "\\d{1,2}:\\d{1,2}";
-    private static final String TIME_START_FORMAT = "HH:mm";
+    private static final String TIME_START_FORMAT = "HH:mm:ss";
+    private static final SimpleDateFormat formatter = new SimpleDateFormat(App.TIME_START_FORMAT);
     private static final ArrayList<String> timeStart = new ArrayList<>();
     private static Path from;
     private static Path to;
@@ -50,7 +53,17 @@ public class App {
         Thread tr = new Thread(new Runnable() {
             @Override
             public void run() {
+                while(true) {
+                    String now = App.formatter.format(new Date().getTime());
+                
+                    if(App.timeStart.indexOf(now) != -1) {
+                        System.out.println("go");
+                    }
 
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ex) {}
+                    }
             }
         });
         tr.setDaemon(true);
@@ -64,7 +77,6 @@ public class App {
         Matcher match = pattern.matcher(time);
 
         GregorianCalendar calendar = new GregorianCalendar();
-        SimpleDateFormat formatter = new SimpleDateFormat(App.TIME_START_FORMAT);
         
         while(match.find()) {
             String[] arr = time.substring(match.start(), match.end())
@@ -72,8 +84,9 @@ public class App {
             
             calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(arr[0]));
             calendar.set(Calendar.MINUTE, Integer.parseInt(arr[1]));
+            calendar.set(Calendar.SECOND, 0);
             
-            App.timeStart.add(formatter.format(calendar.getTime()) );
+            App.timeStart.add(App.formatter.format(calendar.getTime()) );
         }
         
         if(App.timeStart.isEmpty()) {
