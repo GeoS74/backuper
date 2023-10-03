@@ -17,11 +17,11 @@ public class Backuper {
 
     public static void main(String[] args) {
         try {
-//            App.setFrom();
-//            App.setTo();
-//            App.setTimeout();
-              App.setTimeStart();
-//            App.start();
+            App.setFrom();
+            App.setTo();
+////            App.setTimeout();
+            App.setTimeStart();
+            App.start();
               
               String str = "08:10";
               String str2 = "08:10;7:15;22:23; 123:533 45&77";

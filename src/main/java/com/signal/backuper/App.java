@@ -21,7 +21,49 @@ public class App {
     private static final ArrayList<String> timeStart = new ArrayList<>();
     
     public static void start(){
+        App.runDeamon();
         
+        while(true) {
+            String command = App.scan.nextLine();
+             
+            if("q".equals(command) || "quit".equals(command)) {
+                System.out.println("bye bye...");
+                System.exit(0);
+            }
+            
+            if("help".equals(command)) {
+                App.showHelp();
+            }
+            
+            if("state".equals(command)) {
+                App.showState();
+            }
+        }
+    }
+    
+    private static void showState() {
+        System.out.println("state:");
+        System.out.println("\t\"from\":\t\t" + App.from);
+        System.out.println("\t\"to\":\t\t" + App.to);
+        System.out.println("\t\"time start\":\t" + App.timeStart);
+    }
+    
+    private static void showHelp() {
+        System.out.println("use command:");
+        System.out.println("\t\"quit\" or \"q\"\t- stop program");
+        System.out.println("\t\"state\"\t\t- show state backuper");
+        System.out.println("\t\"help\"\t\t- show help");
+    }
+    
+    private static void runDeamon() {
+        Thread tr = new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        });
+        tr.setDaemon(true);
+        tr.start();
     }
     
     public static void setTimeStart() throws Exception {
