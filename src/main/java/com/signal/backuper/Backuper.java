@@ -3,6 +3,7 @@ package com.signal.backuper;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
@@ -17,15 +18,28 @@ public class Backuper {
 
     public static void main(String[] args) {
         try {
-            App.setFrom();
-            App.setTo();
+//            App.setFrom();
+//            App.setTo();
 ////            App.setTimeout();
             App.setTimeStart();
             App.start();
               
               String str = "08:10";
               String str2 = "08:10;7:15;22:23; 123:533 45&77";
-              String str3 = "25:35";
+              String str3 = "5:3";
+              
+
+              int h = Integer.parseInt("08");
+              
+              GregorianCalendar cal = new GregorianCalendar();
+              
+              SimpleDateFormat formatter = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
+              
+              cal.set(Calendar.HOUR_OF_DAY, h);
+              cal.set(Calendar.MINUTE, 3);
+              
+
+//              System.out.println(formatter.format(cal.getTime()));
 //              
 //              GregorianCalendar cal = new GregorianCalendar(2002, 0, 15, 11, 35);
 //              GregorianCalendar cal2 = new GregorianCalendar(2002, 0, 16);

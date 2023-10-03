@@ -6,7 +6,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -17,10 +19,11 @@ public class App {
     private static final ArrayList<String> ignoreRules = new ArrayList<>();
     private static final Scanner scan = new Scanner(System.in);
     private static final String TIME_PATTERN = "\\d{1,2}:\\d{1,2}";
+    private static final String TIME_START_FORMAT = "HH:mm";
+    private static final ArrayList<String> timeStart = new ArrayList<>();
     private static Path from;
     private static Path to;
     private static Long timeOut;
-    private static final ArrayList<String> timeStart = new ArrayList<>();
     
     public static void start(){
         App.messageStart();
@@ -60,8 +63,17 @@ public class App {
         Pattern pattern = Pattern.compile(App.TIME_PATTERN);
         Matcher match = pattern.matcher(time);
 
+        GregorianCalendar calendar = new GregorianCalendar();
+        SimpleDateFormat formatter = new SimpleDateFormat(App.TIME_START_FORMAT);
+        
         while(match.find()) {
-            App.timeStart.add(time.substring(match.start(), match.end()));
+            String[] arr = time.substring(match.start(), match.end())
+                    .split(":");
+            
+            calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(arr[0]));
+            calendar.set(Calendar.MINUTE, Integer.parseInt(arr[1]));
+            
+            App.timeStart.add(formatter.format(calendar.getTime()) );
         }
         
         if(App.timeStart.isEmpty()) {
