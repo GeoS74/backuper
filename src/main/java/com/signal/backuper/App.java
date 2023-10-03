@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -21,14 +23,14 @@ public class App {
     private static final ArrayList<String> timeStart = new ArrayList<>();
     
     public static void start(){
+        App.messageStart();
         App.runDeamon();
         
         while(true) {
             String command = App.scan.nextLine();
              
             if("q".equals(command) || "quit".equals(command)) {
-                System.out.println("bye bye...");
-                System.exit(0);
+                App.exitProgram();
             }
             
             if("help".equals(command)) {
@@ -40,21 +42,7 @@ public class App {
             }
         }
     }
-    
-    private static void showState() {
-        System.out.println("state:");
-        System.out.println("\t\"from\":\t\t" + App.from);
-        System.out.println("\t\"to\":\t\t" + App.to);
-        System.out.println("\t\"time start\":\t" + App.timeStart);
-    }
-    
-    private static void showHelp() {
-        System.out.println("use command:");
-        System.out.println("\t\"quit\" or \"q\"\t- stop program");
-        System.out.println("\t\"state\"\t\t- show state backuper");
-        System.out.println("\t\"help\"\t\t- show help");
-    }
-    
+
     private static void runDeamon() {
         Thread tr = new Thread(new Runnable() {
             @Override
@@ -130,4 +118,28 @@ public class App {
         }
     }
 
+    private static void exitProgram() {
+        System.out.println("bye bye...");
+        System.exit(0);
+    }
+    
+    private static void messageStart() {
+        SimpleDateFormat formatter = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
+        System.out.println("==backup started at " + formatter.format(new Date()) + "==");
+    }
+    
+    private static void showState() {
+        System.out.println("state:");
+        System.out.println("\t\"from\":\t\t" + App.from);
+        System.out.println("\t\"to\":\t\t" + App.to);
+        System.out.println("\t\"time start\":\t" + App.timeStart);
+    }
+    
+    private static void showHelp() {
+        System.out.println("use command:");
+        System.out.println("\t\"quit\" or \"q\"\t- stop program");
+        System.out.println("\t\"state\"\t\t- show state backuper");
+        System.out.println("\t\"help\"\t\t- show help");
+    }
+    
 }
