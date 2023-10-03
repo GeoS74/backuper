@@ -18,9 +18,9 @@ public class Backuper {
 
     public static void main(String[] args) {
         try {
-//            App.setFrom();
+            App.setFrom();
 //            App.setTo();
-            App.setTimeStart();
+//            App.setTimeStart();
             App.start();
 
 //                ArrayList<String> arr = new ArrayList<>();

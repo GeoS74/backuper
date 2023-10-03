@@ -1,9 +1,12 @@
 package com.signal.backuper;
 
 import java.io.IOException;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -24,7 +27,8 @@ public class App {
     private static final String TIME_START_FORMAT = "HH:mm:ss";
     private static final SimpleDateFormat formatter = new SimpleDateFormat(App.TIME_START_FORMAT);
     private static final ArrayList<String> timeStart = new ArrayList<>();
-    private static Path from;
+    private static final SimpleFileVisitor<Path> fileVisitor = App.getFileVisitor();
+    static Path from;
     private static Path to;
     
     public static void start(){
@@ -48,21 +52,42 @@ public class App {
         }
     }
 
+    private static SimpleFileVisitor getFileVisitor() {
+        return new SimpleFileVisitor<Path>() {
+    
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+
+               System.out.println(file);
+               System.out.println(App.from.relativize(file));
+
+               return FileVisitResult.CONTINUE;
+           }
+        };
+    }
+    
     private static void runDeamon() {
         Thread tr = new Thread(new Runnable() {
             @Override
             public void run() {
-                while(true) {
-                    String now = App.formatter.format(new Date().getTime());
+                try {
+                    Files.walkFileTree(App.from, App.fileVisitor);
+                } catch (IOException ex) {}
                 
-                    if(App.timeStart.indexOf(now) != -1) {
-                        System.out.println("go");
-                    }
-
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException ex) {}
-                    }
+//                while(true) {
+//                    String now = App.formatter.format(new Date().getTime());
+//                
+//                    if(App.timeStart.indexOf(now) != -1) {
+//                        System.out.println("go");
+//                        try {
+//                            Files.walkFileTree(App.from, App.fileVisitor);
+//                        } catch (IOException ex) {}
+//                    }
+//
+//                    try {
+//                        Thread.sleep(1000);
+//                    } catch (InterruptedException ex) {}
+//                }
             }
         });
         tr.setDaemon(true);
