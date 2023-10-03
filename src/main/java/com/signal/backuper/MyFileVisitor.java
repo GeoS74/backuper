@@ -12,7 +12,7 @@ public class MyFileVisitor extends SimpleFileVisitor<Path> {
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
 
        System.out.println(file);
-       System.out.println(App.from.relativize(file));
+//       System.out.println(App.from.relativize(file));
 
        return FileVisitResult.CONTINUE;
    }

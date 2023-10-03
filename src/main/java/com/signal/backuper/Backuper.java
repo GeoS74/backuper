@@ -1,5 +1,9 @@
 package com.signal.backuper;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,7 +32,18 @@ public class Backuper {
 //                arr.add("2");
 //                arr.add("3");
 //
-//                System.out.println(arr.indexOf("21"));
+
+//                Path p = Paths.get("a", "b", "c", "d.txt");
+//
+//                System.out.println( File.pathSeparator );
+//                System.out.println( File.pathSeparatorChar );
+//                System.out.println( File.separator );
+//                System.out.println( File.separatorChar );
+//                
+//         
+//
+//                System.out.println( (int)"\\f".charAt(0) );
+//                System.out.println( (char)92 );
 
 
 

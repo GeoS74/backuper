@@ -1,5 +1,6 @@
 package com.signal.backuper;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -10,6 +11,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -28,7 +30,7 @@ public class App {
     private static final SimpleDateFormat formatter = new SimpleDateFormat(App.TIME_START_FORMAT);
     private static final ArrayList<String> timeStart = new ArrayList<>();
     private static final SimpleFileVisitor<Path> fileVisitor = App.getFileVisitor();
-    static Path from;
+    private static Path from;
     private static Path to;
     
     public static void start(){
@@ -58,12 +60,38 @@ public class App {
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
 
+//             File.separator
+
+               System.out.println("====================");
                System.out.println(file);
                System.out.println(App.from.relativize(file));
+               System.out.println(App.matchingIgnoreRules(file));
 
                return FileVisitResult.CONTINUE;
            }
         };
+    }
+    
+    private static boolean matchingIgnoreRules(Path file) {
+//        Pattern pattern = Pattern.compile(App.TIME_PATTERN);
+//        Matcher match = pattern.matcher(time);
+        
+        for(String rule: App.ignoreRules) {
+            
+            // first char "/" about rule
+            if(String.valueOf(rule.charAt(0)).equals(File.separator)) {
+
+                if(Pattern.matches("^" + rule, file.toString())) {
+                    return true;
+                }
+                
+                if(Pattern.matches(rule, file.toString())) {
+                    return true;
+                }
+            }
+        }
+        
+        return false;
     }
     
     private static void runDeamon() {
@@ -71,6 +99,7 @@ public class App {
             @Override
             public void run() {
                 try {
+                    System.out.println(App.ignoreRules);
                     Files.walkFileTree(App.from, App.fileVisitor);
                 } catch (IOException ex) {}
                 
@@ -141,11 +170,12 @@ public class App {
         Path path = Paths.get(App.from.toString(), App.IGNORE_FILE_NAME);
         
         try {
-            List<String> ignoreRules = Files.readAllLines(path);
+            List<String> igRules = Files.readAllLines(path);
+            
+            //default rules
+            App.ignoreRules.add(App.IGNORE_FILE_NAME);
 
-            for(String rule: ignoreRules) {
-                App.ignoreRules.add(rule);
-            }
+            igRules.forEach(rule -> App.ignoreRules.add(Paths.get(rule).toString()));
         } catch (IOException ex) {
             System.out.println("ATTENTION: file .backupignor not exist");
         }
