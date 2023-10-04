@@ -122,28 +122,63 @@ public class App {
     
     private static void addFilesToArchive() {
         String archive = Paths.get(App.to.toString(), App.makeArchiveName()).toString();
-        
+
         try(ZipOutputStream zout = new ZipOutputStream(new FileOutputStream(archive))){
             for(Path file: App.filesForArchive) {
                 String relativePath = App.from.relativize(file).toString();
-                
-                try(FileInputStream fis= new FileInputStream(file.toString());) {
-                
+
+                try(FileInputStream fis = new FileInputStream(file.toString());) {
+                    int  bufferSize = 64000;
+                    byte buffer[]   = new byte[64000];
+                    
                     ZipEntry entry = new ZipEntry(relativePath);
                     zout.putNextEntry(entry);
-                    byte[] buffer = new byte[fis.available()];
-                    fis.read(buffer);
-                    zout.write(buffer);
+                            
+                    int max = fis.available();
+                    System.out.println(fis.available());
+                    
+                    while (fis.available() > 0) {
+                        if (fis.available() < 64000) {
+                            bufferSize = fis.available();
+                        }
+                        fis.read(buffer, 0, bufferSize );
+                        zout.write(buffer);
+                        max = max - 64000;
+                        System.out.println("to end: "+max);
+                    }
                 }
                 catch(Exception ex){
                     System.out.println(ex.getMessage());
-                  } 
+                } 
             }
             zout.closeEntry(); 
         } 
         catch(Exception ex){
             System.out.println(ex.getMessage());
         } 
+
+        
+//        try(ZipOutputStream zout = new ZipOutputStream(new FileOutputStream(archive))){
+//            for(Path file: App.filesForArchive) {
+//                String relativePath = App.from.relativize(file).toString();
+//                
+//                try(FileInputStream fis= new FileInputStream(file.toString());) {
+//                
+//                    ZipEntry entry = new ZipEntry(relativePath);
+//                    zout.putNextEntry(entry);
+//                    byte[] buffer = new byte[fis.available()];
+//                    fis.read(buffer);
+//                    zout.write(buffer);
+//                }
+//                catch(Exception ex){
+//                    System.out.println(ex.getMessage());
+//                  } 
+//            }
+//            zout.closeEntry(); 
+//        } 
+//        catch(Exception ex){
+//            System.out.println(ex.getMessage());
+//        } 
     }
     
     private static boolean matchingIgnoreRules(Path file) {
