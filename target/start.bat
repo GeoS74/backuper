@@ -1,1 +1,0 @@
-java -jar backuper-1.0-SNAPSHOT.jar

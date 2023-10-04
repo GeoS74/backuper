@@ -28,7 +28,7 @@ import java.util.zip.ZipOutputStream;
 public class App {
     private static final String IGNORE_FILE_NAME = ".backupignore";
     private static final ArrayList<Pattern> ignorePatterns = new ArrayList<>();
-    private static final Scanner scan = new Scanner(System.in);
+    private static final Scanner scan = new Scanner(System.in, "cp1251");
     private static final String TIME_PATTERN = "\\d{1,2}:\\d{1,2}";
     private static final SimpleDateFormat timeStartTemplate = new SimpleDateFormat("HH:mm:ss");
     private static final ArrayList<String> timeStart = new ArrayList<>();
