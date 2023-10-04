@@ -97,9 +97,27 @@ public class App {
         System.out.println("input target directory:");
         Path path = Paths.get(App.scan.nextLine());
         if(!Files.isDirectory(path)) {
-            throw new Exception(path + " is not directory");
+            System.out.println("directory does not exist, create directory? [Y/n]");
+            
+            switch(App.scan.nextLine()) {
+                case "Y":
+                case "y":
+                case "Д":
+                case "д":
+                    App.createDirectory(path);
+                    break;
+                default: throw new Exception("failed to create directory");
+            }
         }
         App.to = path;
+    }
+    
+    private static void createDirectory(Path dir) throws Exception {
+        try {
+            Files.createDirectories(dir);
+        } catch(IOException ex) {
+            throw new Exception("failed to create directory!");
+        }
     }
     
     private static void addFilesToArchive() {
@@ -230,10 +248,14 @@ public class App {
         System.out.println("state:");
         System.out.println("\t\"from\":\t\t" + App.from);
         System.out.println("\t\"to\":\t\t" + App.to);
-        System.out.println("\t\"time start\":\t" + App.timeStart);
+        System.out.println("\t\"time to backup\":" + App.timeStart);
         
         SimpleDateFormat t = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        System.out.println("\t\"last backup\":\t" + t.format(App.lastBackup));
+        String last = "There is no backup right now";
+        if(App.lastBackup != null) {
+            last = t.format(App.lastBackup);
+        }
+        System.out.println("\t\"last backup\":\t" + last);
     }
     
     private static void showHelp() {
