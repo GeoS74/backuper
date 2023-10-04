@@ -74,8 +74,15 @@ public class App {
                 return true;
             }
         }
-        
         return false;
+    }
+    
+    private static Pattern makeIgnorePattern(String rule) {
+        rule = rule.replaceFirst("^/", "^");
+        rule = rule.replaceAll("\\*", "[^/]*");
+        rule = rule.replaceAll("\\.", "\\\\.");
+        rule = rule.replaceAll("\\+", "\\\\+");
+        return Pattern.compile(rule);
     }
     
     private static void runDeamon() {
@@ -165,14 +172,6 @@ public class App {
         } catch (IOException ex) {
             System.out.println("ATTENTION: file .backupignor not exist");
         }
-    }
-    
-    private static Pattern makeIgnorePattern(String rule) {
-        // other special symbols?
-        rule = rule.replaceFirst("^/", "^");
-        rule = rule.replaceAll("\\*", "[^/]*");
-        rule = rule.replaceAll("\\.", "\\\\.");
-        return Pattern.compile(rule);
     }
 
     private static void exitProgram() {

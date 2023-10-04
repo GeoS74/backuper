@@ -23,8 +23,8 @@ public class Backuper {
     public static void main(String[] args) {
         try {
             App.setFrom();
-            App.setTo();
-            App.setTimeStart();
+//            App.setTo();
+//            App.setTimeStart();
             App.start();
 
 //        System.out.println(Paths.get("dd"));
