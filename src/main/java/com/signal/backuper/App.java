@@ -31,7 +31,6 @@ public class App {
     private static final Scanner scan = new Scanner(System.in);
     private static final String TIME_PATTERN = "\\d{1,2}:\\d{1,2}";
     private static final SimpleDateFormat timeStartTemplate = new SimpleDateFormat("HH:mm:ss");
-    private static final SimpleDateFormat timeArchiveTemplate = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
     private static final ArrayList<String> timeStart = new ArrayList<>();
     private static final SimpleFileVisitor<Path> fileVisitor = App.getFileVisitor();
     private static final ArrayList<Path> filesForArchive = new ArrayList<>();
@@ -211,7 +210,8 @@ public class App {
     }
 
     private static String makeArchiveName() {
-        return "backup_"+ App.timeArchiveTemplate.format(new Date().getTime())+".zip";
+        SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+        return "backup_"+ f.format(new Date().getTime())+".zip";
     }
         
     private static void exitProgram() {
@@ -220,7 +220,8 @@ public class App {
     }
     
     private static void messageStart() {
-        System.out.println("==backup started at " + App.timeArchiveTemplate.format(new Date()) + "==");
+        SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        System.out.println("==backup started at " + f.format(new Date()) + "==");
     }
     
     private static void showState() {
