@@ -36,6 +36,7 @@ public class App {
     private static final ArrayList<Path> filesForArchive = new ArrayList<>();
     private static Path from;
     private static Path to;
+    private static Date lastBackup;
     
     public static void start(){
         App.messageStart();
@@ -151,6 +152,7 @@ public class App {
             App.filesForArchive.clear();
             Files.walkFileTree(App.from, App.fileVisitor);
             App.addFilesToArchive();
+            App.lastBackup = new Date();
         } catch (IOException ex) {}
     }
     
@@ -229,6 +231,9 @@ public class App {
         System.out.println("\t\"from\":\t\t" + App.from);
         System.out.println("\t\"to\":\t\t" + App.to);
         System.out.println("\t\"time start\":\t" + App.timeStart);
+        
+        SimpleDateFormat t = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        System.out.println("\t\"last backup\":\t" + t.format(App.lastBackup));
     }
     
     private static void showHelp() {
