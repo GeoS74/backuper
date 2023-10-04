@@ -1,5 +1,7 @@
 package com.signal.backuper;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -14,8 +16,12 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 public class App {
     private static final String IGNORE_FILE_NAME = ".backupignore";
@@ -26,6 +32,7 @@ public class App {
     private static final SimpleDateFormat formatter = new SimpleDateFormat(App.TIME_START_FORMAT);
     private static final ArrayList<String> timeStart = new ArrayList<>();
     private static final SimpleFileVisitor<Path> fileVisitor = App.getFileVisitor();
+    private static final ArrayList<Path> filesForArchive = new ArrayList<>();
     private static Path from;
     private static Path to;
     
@@ -50,20 +57,57 @@ public class App {
         }
     }
 
+    
+    
+    
+    
+    
     private static SimpleFileVisitor getFileVisitor() {
         return new SimpleFileVisitor<Path>() {
     
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-
-               System.out.println("====================");
-               System.out.println(file);
-               System.out.println(App.from.relativize(file));
-               System.out.println(App.matchingIgnoreRules(file));
-
+               
+               if(!App.matchingIgnoreRules(file)) {
+                   App.filesForArchive.add(file);
+               }
                return FileVisitResult.CONTINUE;
            }
         };
+    }
+    
+    private static void addFilesToArchive() {
+        Path archive = Paths.get(App.to.toString(), new Date().getTime()+"output.zip");
+        
+        try(ZipOutputStream zout = new ZipOutputStream(new FileOutputStream(archive.toString())))
+        {
+
+            for(Path file: App.filesForArchive) {
+                String relativePath = App.from.relativize(file).toString();
+                
+                try(FileInputStream fis= new FileInputStream(file.toString());) {
+                
+                    ZipEntry entry = new ZipEntry(relativePath);
+                    zout.putNextEntry(entry);
+        //            // считываем содержимое файла в массив byte
+                    byte[] buffer = new byte[fis.available()];
+                    fis.read(buffer);
+        //            // добавляем содержимое к архиву
+                    zout.write(buffer);
+                }
+                catch(Exception ex){
+                    System.out.println("archive error");
+                    System.out.println(ex.getMessage());
+                  } 
+                
+            }
+            // закрываем текущую запись для новой записи
+            zout.closeEntry();
+        }
+        catch(Exception ex){
+            System.out.println("archives error");
+            System.out.println(ex.getMessage());
+        } 
     }
     
     private static boolean matchingIgnoreRules(Path file) {
@@ -93,6 +137,18 @@ public class App {
             public void run() {
                 try {
                     Files.walkFileTree(App.from, App.fileVisitor);
+                    App.addFilesToArchive();
+                    filesForArchive.clear();
+                    
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException ex) {}
+                    
+                    
+                    Files.walkFileTree(App.from, App.fileVisitor);
+                    App.addFilesToArchive();
+                    filesForArchive.clear();
+                    
                 } catch (IOException ex) {}
                 
 //                while(true) {
