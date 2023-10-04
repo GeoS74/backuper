@@ -85,6 +85,8 @@ public class App {
         return Pattern.compile(rule);
     }
     
+    
+    
     private static void runDeamon() {
         Thread tr = new Thread(new Runnable() {
             @Override
@@ -166,9 +168,14 @@ public class App {
             App.ignorePatterns.add(App.makeIgnorePattern(App.IGNORE_FILE_NAME));
             
             // other rules
-            igRules.forEach(rule -> {
-                App.ignorePatterns.add(App.makeIgnorePattern(rule));
+            igRules.forEach((String rule) -> {
+                if(!rule.isEmpty()) { // ignore empty string
+                    App.ignorePatterns.add(App.makeIgnorePattern(rule));
+                }
             });
+            
+            System.out.println(App.ignorePatterns.size());
+            System.out.println(App.ignorePatterns);
         } catch (IOException ex) {
             System.out.println("ATTENTION: file .backupignor not exist");
         }
