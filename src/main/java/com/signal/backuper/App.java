@@ -27,16 +27,21 @@ import java.util.zip.ZipOutputStream;
  */
 public class App {
     private static final String IGNORE_FILE_NAME = ".backupignore";
-    private static final ArrayList<Pattern> ignorePatterns = new ArrayList<>();
-    private static final Scanner scan = new Scanner(System.in, "cp866"); // cp1251 for dev, cp866 for prod
+    private static final int MAX_BUFFER_SIZE = 64000;
+    private static final Scanner scan = new Scanner(System.in, "cp1251"); // cp1251 / cp866 (default cmd Windows)
     private static final String TIME_PATTERN = "\\d{1,2}:\\d{1,2}";
+    private static final SimpleDateFormat timeFullTemplate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final SimpleDateFormat timeBackupTemplate = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
     private static final SimpleDateFormat timeStartTemplate = new SimpleDateFormat("HH:mm:ss");
+    private static final ArrayList<Pattern> ignorePatterns = new ArrayList<>();
     private static final ArrayList<String> timeStart = new ArrayList<>();
     private static final SimpleFileVisitor<Path> fileVisitor = App.getFileVisitor();
     private static final ArrayList<Path> filesForArchive = new ArrayList<>();
     private static Path from;
     private static Path to;
     private static Date lastBackup;
+    private static enum Status {WAIT, RUN};
+    private static Status status = App.Status.WAIT;
     
     public static void start(){
         App.messageStart();
@@ -128,57 +133,30 @@ public class App {
                 String relativePath = App.from.relativize(file).toString();
 
                 try(FileInputStream fis = new FileInputStream(file.toString());) {
-                    int  bufferSize = 64000;
-                    byte buffer[]   = new byte[64000];
+                    int  bufferSize = App.MAX_BUFFER_SIZE;
+                    byte buffer[]   = new byte[App.MAX_BUFFER_SIZE];
                     
                     ZipEntry entry = new ZipEntry(relativePath);
                     zout.putNextEntry(entry);
-                            
-                    int max = fis.available();
-                    System.out.println(fis.available());
-                    
+
                     while (fis.available() > 0) {
-                        if (fis.available() < 64000) {
+                        if (fis.available() < App.MAX_BUFFER_SIZE) {
                             bufferSize = fis.available();
                         }
                         fis.read(buffer, 0, bufferSize );
                         zout.write(buffer);
-                        max = max - 64000;
-                        System.out.println("to end: "+max);
                     }
+                    
+                    zout.closeEntry(); 
                 }
                 catch(Exception ex){
                     System.out.println(ex.getMessage());
                 } 
             }
-            zout.closeEntry(); 
         } 
         catch(Exception ex){
             System.out.println(ex.getMessage());
         } 
-
-        
-//        try(ZipOutputStream zout = new ZipOutputStream(new FileOutputStream(archive))){
-//            for(Path file: App.filesForArchive) {
-//                String relativePath = App.from.relativize(file).toString();
-//                
-//                try(FileInputStream fis= new FileInputStream(file.toString());) {
-//                
-//                    ZipEntry entry = new ZipEntry(relativePath);
-//                    zout.putNextEntry(entry);
-//                    byte[] buffer = new byte[fis.available()];
-//                    fis.read(buffer);
-//                    zout.write(buffer);
-//                }
-//                catch(Exception ex){
-//                    System.out.println(ex.getMessage());
-//                  } 
-//            }
-//            zout.closeEntry(); 
-//        } 
-//        catch(Exception ex){
-//            System.out.println(ex.getMessage());
-//        } 
     }
     
     private static boolean matchingIgnoreRules(Path file) {
@@ -206,7 +184,9 @@ public class App {
             Files.walkFileTree(App.from, App.fileVisitor);
             App.addFilesToArchive();
             App.lastBackup = new Date();
-        } catch (IOException ex) {}
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        }
     }
     
     private static void runDeamon() {
@@ -217,7 +197,9 @@ public class App {
                     String now = App.timeStartTemplate.format(new Date().getTime());
                 
                     if(App.timeStart.indexOf(now) != -1) {
+                        App.status = App.Status.RUN;
                         App.makeArchive();
+                        App.status = App.Status.WAIT;
                     }
 
                     try {
@@ -265,8 +247,7 @@ public class App {
     }
 
     private static String makeArchiveName() {
-        SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-        return "backup_"+ f.format(new Date().getTime())+".zip";
+        return "backup_"+ App.timeBackupTemplate.format(new Date().getTime())+".zip";
     }
         
     private static void exitProgram() {
@@ -275,8 +256,7 @@ public class App {
     }
     
     private static void messageStart() {
-        SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        System.out.println("==backup started at " + f.format(new Date()) + "==");
+        System.out.println("== backup started at " + App.timeFullTemplate.format(new Date()) + " ==");
     }
     
     private static void showState() {
@@ -284,13 +264,14 @@ public class App {
         System.out.println("\t\"from\":\t\t" + App.from);
         System.out.println("\t\"to\":\t\t" + App.to);
         System.out.println("\t\"time to backup\":" + App.timeStart);
-        
-        SimpleDateFormat t = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
         String last = "There is no backup right now";
         if(App.lastBackup != null) {
-            last = t.format(App.lastBackup);
+            last = App.timeFullTemplate.format(App.lastBackup);
         }
         System.out.println("\t\"last backup\":\t" + last);
+        
+        System.out.println("\t\"status\":\t" + App.status);
     }
     
     private static void showHelp() {
