@@ -27,7 +27,7 @@ import java.util.zip.ZipOutputStream;
  */
 public class App {
     private static final String IGNORE_FILE_NAME = ".backupignore";
-    private static final int MAX_BUFFER_SIZE = 64000;
+    private static final int MAX_BUFFER_SIZE = 5000000;
     private static final Scanner scan = new Scanner(System.in, "cp1251"); // cp1251 / cp866 (default cmd Windows)
     private static final String TIME_PATTERN = "\\d{1,2}:\\d{1,2}";
     private static final SimpleDateFormat timeFullTemplate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
